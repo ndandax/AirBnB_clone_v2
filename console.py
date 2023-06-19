@@ -118,37 +118,37 @@ class HBNBCommand(cmd.Cmd):
     def do_create(self, args):
          """Creates a new instance of BaseModel, saves it
         """
-        try:
-            if not args:
+         try:
+             if not args:
                 raise SyntaxError()
-            my_list = args.split(" ")
+             my_list = args.split(" ")
 
-            if my_list:
+             if my_list:
                 cls_name = my_list[0]
-            else:  # class name missing
+             else:  # class name missing
                 raise SyntaxError()
 
-            kwargs = {}
+             kwargs = {}
 
-            for pair in my_list[1:]:
-                k, v = pair.split("=")
-                if self.is_int(v):
-                    kwargs[k] = int(v)
-                elif self.is_float(v):
-                    kwargs[k] = float(v)
-                else:
-                    v = v.replace('_', ' ')
-                    kwargs[k] = v.strip('"\'')
+             for pair in my_list[1:]:
+                 k, v = pair.split("=")
+                 if self.is_int(v):
+                     kwargs[k] = int(v)
+                 elif self.is_float(v):
+                     kwargs[k] = float(v)
+                 else:
+                     v = v.replace('_', ' ')
+                     kwargs[k] = v.strip('"\'')
 
-            obj = self.classes[cls_name](**kwargs)
-            storage.new(obj)
-            obj.save()
-            print(obj.id)
+             obj = self.classes[cls_name](**kwargs)
+             storage.new(obj)
+             obj.save()
+             print(obj.id)
 
-        except SyntaxError:
-            print("** class name missing **")
-        except KeyError:
-            print("** class doesn't exist **")
+         except SyntaxError:
+             print("** class name missing **")
+         except KeyError:
+             print("** class doesn't exist **")
 
     def help_create(self):
         """ Help information for the create method """
