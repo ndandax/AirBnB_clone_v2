@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 """This module defines a class to manage file storage for hbnb clone"""
 import json
+from models.state import State
+from models.city import City
 
 
 class FileStorage:
@@ -10,14 +12,14 @@ class FileStorage:
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        if cls is not None:
-            cls_objects = {}
-            for k, v in FileStorage.__objects.items():
-                if k.startswith(cls.__name__):
-                    cls_objects.update({k: v})
-            return cls_objects
-        else:
-            return FileStorage.__objects
+        new_dict = {}
+        if cls:
+            for key in FileStorage.__objects.keys():
+                if key.split('.')[0] == cls.__name__:
+                    new_dict[key] = FileStorage.__objects[key]
+            return new_dict
+
+        return FileStorage.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -30,15 +32,17 @@ class FileStorage:
             temp.update(FileStorage.__objects)
             for key, val in temp.items():
                 temp[key] = val.to_dict()
-            json.dump(temp, f, sort_keys=True, indent=4)
+            json.dump(temp, f)
 
+# Update
     def delete(self, obj=None):
-        """Deletes the object obj if obj is in __objects"""
-        if obj is not None:
-            for k, v in FileStorage.__objects.items():
-                if v is obj:
-                    tmp = k
-            FileStorage.__objects.pop(tmp)
+        """Delete object from __objects"""
+        if obj is None:
+            return
+
+        key_obj = obj.to_dict()['__class__'] + '.' + obj.id
+        if key_obj in type(self).__objects.keys():
+            del type(self).__objects[key_obj]
 
     def reload(self):
         """Loads storage dictionary from file"""
@@ -51,10 +55,10 @@ class FileStorage:
         from models.review import Review
 
         classes = {
-            'BaseModel': BaseModel, 'User': User, 'Place': Place,
-            'State': State, 'City': City, 'Amenity': Amenity,
-            'Review': Review
-        }
+                    'BaseModel': BaseModel, 'User': User, 'Place': Place,
+                    'State': State, 'City': City, 'Amenity': Amenity,
+                    'Review': Review
+                  }
         try:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
@@ -63,7 +67,3 @@ class FileStorage:
                     self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
-
-    def close(self):
-        """Handles storage close"""
-        self.reload()
