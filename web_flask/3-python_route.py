@@ -21,7 +21,14 @@ def hello1():
 @app.route("/c/<text>", strict_slashes=False)
 def display_C(text):
     """displaying text"""
-    return text.replace("_", " ")
+    return ("C " + text.replace("_", " "))
+
+
+@app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
+@app.route("/python/<text>", strict_slashes=False)
+def python1(text="is cool"):
+    """displaying text"""
+    return ("Python " + text.replace("_", " "))
 
 
 if __name__ == "__main__":
