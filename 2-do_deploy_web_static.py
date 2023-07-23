@@ -8,7 +8,7 @@ from os.path import exists, isfile
 import os
 import argparse
 
-env.hosts = ['54.196.27.23', '54.157.128.152']
+env.hosts = ['34.201.165.189', '54.236.30.97']
 
 
 def do_deploy(archive_path):
